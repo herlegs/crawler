@@ -1,5 +1,6 @@
 import os
 from six.moves.urllib.request import urlopen
+from bs4 import BeautifulSoup
 
 class ArticleListGetter():
     '''
@@ -84,9 +85,50 @@ class Chapter():
         content += self.getContentFunc(html)
         return content
 
-
 def getHtmlFromUrl(url):
     connection = urlopen(url)
     content = connection.read()
     connection.close()
     return content
+
+def getArticleInfoListFunc(html):
+    '''return list of article info:
+    {'url': required, 'title':required}'''
+    selector = args['articleId']
+    soup = BeautifulSoup(html, 'html.parser')
+    articleElementList = soup.select(selector)
+    articleInfoList = []
+    for ele in articleElementList:
+        articleInfo = args['getArticleInfoFunc'](ele)
+        articleInfoList.append(articleInfo)
+    return articleInfoList
+
+def getChapterListFunc(html):
+    '''return list of article info:
+    {'url': required, 'title':optional}'''
+    selector = args['chapterId']
+    soup = BeautifulSoup(html, 'html.parser')
+    chapterElementList = soup.select(selector)
+    chapterInfoList = []
+    for ele in chapterElementList:
+        chapterInfo = args['getArticleInfoFunc'](ele)
+        chapterInfoList.append(chapterInfo)
+    return chapterInfoList
+
+def getChapterContentFunc(html):
+    '''return chapter content'''
+    return
+
+args = {
+    'url': "",  #need to be override
+    'articleFolder': "",    #need to be override
+    'getArticleInfoListFunc': getArticleInfoListFunc,
+    'getChapterListFunc': getChapterListFunc,
+    'getChapterContentFunc': getChapterContentFunc, #need to be override
+    'articleId': "",    #need to be override
+    'getArticleInfoFunc': None, #need to be override
+    'chapterId': "",    #need to be override
+    'getChapterInfoFunc': None, #need to be override
+}
+
+
