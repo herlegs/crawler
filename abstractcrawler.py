@@ -1,5 +1,5 @@
-import urllib
 import os
+from six.moves.urllib.request import urlopen
 
 class ArticleListGetter():
     '''
@@ -86,7 +86,7 @@ class Chapter():
 
 
 def getHtmlFromUrl(url):
-    connection = urllib.urlopen(url)
+    connection = urlopen(url)
     content = connection.read()
     connection.close()
     return content
