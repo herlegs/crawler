@@ -1,21 +1,33 @@
 "crawl chinese novel from internet"
 import urllib
+from abstractcrawler import *
 
-__domain = "http://www.cnnovels.com"
-category = {
-	"JinYong": "/wx/jingyong/index.html"
-}
+url = "http://www.cnnovels.com/wx/jingyong/index.html"
 
-def getHtmlFromUrl(url):
-    url = urllib.urlopen(url)
-    content = url.read()
+articleFolder = "jingyong"
 
-    url.close()
+def getArticleInfoListFunc(html):
     return
 
-def writeToFile(content, filename):
-    out = open(filename, "w")
-    out.write(content)
-    out.close()
+def getChapterListFunc(html):
+    return
 
-print(category)
+def getChapterContentFunc(html):
+    return
+
+args = {
+    'url': url,
+    'articleFolder': articleFolder,
+    'getArticleInfoListFunc': getArticleInfoListFunc,
+    'getChapterListFunc': getChapterListFunc,
+    'getChapterContentFunc': getChapterContentFunc,
+}
+
+def crawlBooks():
+    crawler = ArticleListGetter(args)
+    crawler.storeArticles()
+
+#test
+print("start crawling...")
+crawlBooks()
+print("crawl finished")
