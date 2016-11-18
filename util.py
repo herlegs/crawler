@@ -13,6 +13,8 @@ def extract(route):
 	match = pattern.search(route)
 	return match.group()
 
-list = ['Route:52.198.61.109/32','Route:52.199.48.176/32','Route:10.200.26.0/24']
-converted = [extract(x) for x in list]
-print(converted)
+def test(**args):
+	print(args['arg'])
+	return
+
+test(arg = '1')

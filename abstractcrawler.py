@@ -17,7 +17,7 @@ class ArticleListGetter():
 
     def getArticleInfoList(self):
         html = getHtmlFromUrl(self.url)
-        return self.getArticleListFunc(html)
+        return self.getArticleListFunc(html, self.url)
 
     def storeArticles(self):
         articleInfoList = self.getArticleInfoList()
@@ -34,13 +34,13 @@ class ArticleListGetter():
 class ArticleGetter():
     '''
     needed in args:
-    getChapterListFunc:
+    getChapterInfoListFunc:
     '''
     def __init__(self, articleInfo, args, folder=None):
         self.args = args
         self.title = articleInfo['title']
         self.url = articleInfo['url']
-        self.getChapterListFunc = args['getChapterListFunc']
+        self.getChapterInfoListFunc = args['getChapterInfoListFunc']
         self.articleFilename = self.title + ".txt"
         if folder is not None:
             self.articleFilename = folder + "/" + self.articleFilename
@@ -62,7 +62,7 @@ class ArticleGetter():
 
     def getChapterListInfo(self):
         html = getHtmlFromUrl(self.url)
-        return self.getChapterListFunc(html)
+        return self.getChapterInfoListFunc(html, self.url)
 
 
 
@@ -91,44 +91,63 @@ def getHtmlFromUrl(url):
     connection.close()
     return content
 
-def getArticleInfoListFunc(html):
+def getArticleInfoListFunc(html, url):
     '''return list of article info:
     {'url': required, 'title':required}'''
-    selector = args['articleId']
+    selector = settings['articleId']
     soup = BeautifulSoup(html, 'html.parser')
     articleElementList = soup.select(selector)
     articleInfoList = []
     for ele in articleElementList:
-        articleInfo = args['getArticleInfoFunc'](ele)
+        articleInfo = settings['getArticleInfoFunc'](ele, url)
         articleInfoList.append(articleInfo)
     return articleInfoList
 
-def getChapterListFunc(html):
+def getChapterInfoListFunc(html, url):
     '''return list of article info:
     {'url': required, 'title':optional}'''
-    selector = args['chapterId']
+    selector = settings['chapterId']
     soup = BeautifulSoup(html, 'html.parser')
     chapterElementList = soup.select(selector)
     chapterInfoList = []
     for ele in chapterElementList:
-        chapterInfo = args['getArticleInfoFunc'](ele)
+        chapterInfo = settings['getChapterInfoFunc'](ele, url)
         chapterInfoList.append(chapterInfo)
     return chapterInfoList
 
-def getChapterContentFunc(html):
-    '''return chapter content'''
-    return
-
-args = {
-    'url': "",  #need to be override
-    'articleFolder': "",    #need to be override
+settings = {
+    # REQUIRED: article list url
+    'url': None,
+    # OPTIONAL: folder to store all articles under the article list url
+    # if None is passed then it will use url as folder name
+    'articleFolder': None,
+    # OPTIONAL: function to extract list of article info from the article list page
+    # By default it will use 'articleId' to get article element
+    # and use getArticleInfoFunc(element=ele, url=article list url) to get article info object
+    # Can be overrided
     'getArticleInfoListFunc': getArticleInfoListFunc,
-    'getChapterListFunc': getChapterListFunc,
-    'getChapterContentFunc': getChapterContentFunc, #need to be override
-    'articleId': "",    #need to be override
-    'getArticleInfoFunc': None, #need to be override
-    'chapterId': "",    #need to be override
-    'getChapterInfoFunc': None, #need to be override
+    # OPTIONAL: function to extract list of chapter info from the article page
+    # similar to getArticleInfoListFunc
+    # use 'chapterId' and 'getChapterInfoFunc'
+    'getChapterInfoListFunc': getChapterInfoListFunc,
+    # REQUIRED: article object css selector
+    'articleId': None,
+    # REQUIRED
+    # Parameter:
+    # 1. article object fetched by 'articleId'
+    # 2. url of article list page
+    'getArticleInfoFunc': None,
+    # REQUIRED: chapter object css selector
+    'chapterId': None,
+    # REQUIRED
+    # Parameter:
+    # 1. chapter object fetched by 'chapterId'
+    # 2. url of article page
+    'getChapterInfoFunc': None,
+    # REQUIRED: function to extract content from chapter page
+    # Parameter:
+    # 1. html of chapter page
+    'getChapterContentFunc': None,
 }
 
 
