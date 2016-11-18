@@ -17,4 +17,7 @@ def test(**args):
 	print(args['arg'])
 	return
 
-test(arg = '1')
+file = open("test.txt", "w+")
+string = "abc".encode('utf-8') + "\n"
+file.write(string)
+file.close()

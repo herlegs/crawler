@@ -21,12 +21,15 @@ class ArticleListGetter():
 
     def storeArticles(self):
         articleInfoList = self.getArticleInfoList()
-        if articleInfoList is not None and len(articleInfoList) > 0:
+        if (articleInfoList is not None
+                and not os.path.exists(self.articleFolder)
+                and len(articleInfoList) > 0):
             os.makedirs(self.articleFolder)
         for articleInfo in articleInfoList:
             articleTitle = articleInfo['title']
             articleUrl = articleInfo['url']
             articleGetter = ArticleGetter(articleInfo, self.args, folder=self.articleFolder)
+            articleGetter.storeArticle()
         return
 
 
@@ -46,18 +49,24 @@ class ArticleGetter():
             self.articleFilename = folder + "/" + self.articleFilename
 
     def storeArticle(self):
-        articleContent = self.title + "\n"
+        log("creating " + self.title + "...")
+        articleFile = open(self.articleFilename, "w+")
+        articleFile.write((self.title + "\n").encode('utf-8'))
         chapterInfoList = self.getChapterListInfo()
+        count = 1
         if chapterInfoList is not None and len(chapterInfoList) > 0:
            for chapterInfo in chapterInfoList:
                chapterContent = Chapter(chapterInfo, self.args).getContent()
-               articleContent += chapterContent + "\n"
+               chapterTitle = chapterInfo['title'] if 'title' in chapterInfo else "chapter {}".format(count)
+               log("writing " + chapterTitle + "...")
+               articleFile.write((chapterContent + "\n").encode('utf-8'))
+               count += 1
         else:
             chapterInfo = {'url': self.url}
             chapterContent = Chapter(chapterInfo, self.args).getContent()
-            articleContent += chapterContent + "\n"
-        articleFile = open(self.articleFilename, "w+")
-        articleFile.write(articleContent)
+            articleFile.write((chapterContent + "\n").encode('utf-8'))
+
+        log("finished " + self.title)
         articleFile.close()
 
     def getChapterListInfo(self):
@@ -90,6 +99,10 @@ def getHtmlFromUrl(url):
     content = connection.read()
     connection.close()
     return content
+
+def log(string):
+    if settings['logEnabled']:
+        print(string)
 
 def getArticleInfoListFunc(html, url):
     '''return list of article info:
@@ -148,6 +161,7 @@ settings = {
     # Parameter:
     # 1. html of chapter page
     'getChapterContentFunc': None,
+    'logEnabled': True
 }
 
 

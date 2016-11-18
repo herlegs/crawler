@@ -35,15 +35,21 @@ settings['chapterId'] = "body > center:nth-of-type(5) > table a"
 settings['getChapterInfoFunc'] = getChapterInfoFunc
 settings['getChapterContentFunc'] = getChapterContentFunc
 
-#test list page
+# test list page
 # listUrl = "http://www.cnnovels.com/wx/jingyong/"
 # settings['getArticleInfoListFunc'](getHtmlFromUrl(listUrl), listUrl)
-#test article page
+# test article page
 # articleUrl = 'http://www.cnnovels.com/wx/jingyong/eagle/index.html'
 # settings['getChapterInfoListFunc'](getHtmlFromUrl(articleUrl), articleUrl)
-#test chapter page
+# test chapter page
 # chapterUrl = "http://www.cnnovels.com/wx/jingyong/eagle/001.htm"
-# settings['getChapterContentFunc'](getHtmlFromUrl(chapterUrl))
+# content = settings['getChapterContentFunc'](getHtmlFromUrl(chapterUrl))
+# test encoding
+# file = open("test.txt", "w+")
+# string = "..." + content[:20]
+# print(string)
+# file.write((content[:20] + "...").encode("utf-8"))
+# file.close()
 
 print("start crawling...")
 crawlBooks()
