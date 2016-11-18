@@ -26,7 +26,7 @@ def crawlBooks():
     crawler.storeArticles()
 
 settings['url'] = "http://www.cnnovels.com/wx/jingyong/"
-settings['articleFolder'] = "jingyong"
+settings['articleFolder'] = "resources/jingyong"
 # settings['getArticleInfoListFunc'] = getArticleInfoListFunc
 # settings['getChapterInfoListFunc'] = getChapterInfoListFunc
 settings['articleId'] = "body > center:nth-of-type(4) > table a:nth-of-type(6)"
